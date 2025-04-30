@@ -8,3 +8,9 @@
 
 pip install docker
 pip install mysql-connector-python
+
+#HOW TO RUN
+
+Use python in terminal and execute main.py
+
+python main.py
