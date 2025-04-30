@@ -3,7 +3,7 @@ import time
 
 
 def iniciar_menu_crud(puerto):
-    time.sleep(10)  # Dar tiempo al contenedor para arrancar
+    time.sleep(10)
 
     conexion = mysql.connector.connect(
         host="localhost",
