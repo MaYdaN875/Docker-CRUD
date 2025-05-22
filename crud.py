@@ -1,5 +1,5 @@
-import mysql.connector
-import time
+
+from query_builder import SQLQueryBuilder
 
 
 def iniciar_menu_crud_completo(puerto):
@@ -24,6 +24,10 @@ def iniciar_menu_crud_completo(puerto):
             eliminar(cursor)
         elif opcion == "5":
             break
+        elif opcion == "6":
+            consulta_personalizada(conexion)
+        else:
+            print("Opción no válida.")
 
         conexion.commit()
 
@@ -119,3 +123,34 @@ def eliminar(cursor):
 def verificar_password():
     pwd = input("Contraseña de root: ")
     return pwd == "admin123"  # puedes cambiarla o usar variables de entorno
+
+
+def consulta_personalizada(conexion):
+    tabla = input("Tabla a consultar: ")
+    builder = SQLQueryBuilder(tabla)
+
+    columnas = input("Columnas (separadas por coma o *): ")
+    builder.select([c.strip() for c in columnas.split(",")])
+
+    while True:
+        condicion = input("Agregar condición WHERE (vacío para continuar): ")
+        if not condicion.strip():
+            break
+        builder.where(condicion)
+
+    ordenar = input("Ordenar por (vacío para omitir): ")
+    if ordenar:
+        direccion = input("Dirección (ASC/DESC): ").upper() or "ASC"
+        builder.order_by(ordenar, direccion)
+
+    query = builder.build()
+    print(f"\nConsulta generada:\n{query}\n")
+
+    cursor = conexion.cursor()
+    try:
+        cursor.execute(query)
+        resultados = cursor.fetchall()
+        for fila in resultados:
+            print(fila)
+    except Exception as e:
+        print(f"❌ Error al ejecutar la consulta: {e}")
